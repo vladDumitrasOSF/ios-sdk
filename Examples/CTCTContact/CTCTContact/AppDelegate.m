@@ -14,6 +14,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
+    NSString *email = [[NSUserDefaults standardUserDefaults] objectForKey:@"email"];
+    
+    [CTCTGlobal shared].token = token;
+    [CTCTGlobal shared].email = email;
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
@@ -23,6 +29,7 @@
     self.viewController = nav;
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
+    
     return YES;
 }
 
