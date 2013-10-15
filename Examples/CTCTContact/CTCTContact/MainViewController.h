@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ContactsCollection.h"
+#import "LoadingView.h"
+#import "CTCTGlobal.h"
+
 @interface MainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 @property (nonatomic, readwrite) BOOL wasAdded;
