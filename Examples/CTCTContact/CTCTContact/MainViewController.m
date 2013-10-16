@@ -231,6 +231,7 @@
 - (void)loginViewController:(CTCTLoginViewController *)loginViewController didLoginWithAccessToken:(NSString *)accessToken
 {
     [CTCTGlobal shared].token = accessToken;
+    [[NSUserDefaults standardUserDefaults] setObject:accessToken forKey:@"token"];
     
 #if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 60000)
         [self dismissViewControllerAnimated:YES completion:nil];
@@ -256,11 +257,14 @@
             NSArray *verifiedEmails = response.data;
             EmailAddress *vEmail = [verifiedEmails objectAtIndex:0];
             [CTCTGlobal shared].email = vEmail.emailAddress;
+            
+            [[NSUserDefaults standardUserDefaults] setObject:vEmail.emailAddress forKey:@"email"];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
             [self hideLoading];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             
         });
     });

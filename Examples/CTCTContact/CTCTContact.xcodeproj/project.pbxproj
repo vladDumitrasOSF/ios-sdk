@@ -69,8 +69,6 @@
 		B0F397701729376300205B40 /* EmailCampaignService.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F397401729376200205B40 /* EmailCampaignService.m */; };
 		B0F397711729376300205B40 /* VerifiedEmailAddresses.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F397421729376200205B40 /* VerifiedEmailAddresses.m */; };
 		B0F397721729376300205B40 /* CTCTGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F397451729376200205B40 /* CTCTGlobal.m */; };
-		C3007A41180D643800D68F48 /* EmailSortedActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = C3007A40180D643700D68F48 /* EmailSortedActivity.m */; };
-		C30EC318180D66F9003AA395 /* AllActivites.m in Sources */ = {isa = PBXBuildFile; fileRef = C30EC317180D66F9003AA395 /* AllActivites.m */; };
 		C30EC31C180D8B32003AA395 /* CollectionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C30EC31A180D8B2E003AA395 /* CollectionsViewController.m */; };
 		C30EC31D180D8B32003AA395 /* CollectionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C30EC31B180D8B30003AA395 /* CollectionsViewController.xib */; };
 /* End PBXBuildFile section */
@@ -189,10 +187,6 @@
 		B0F397421729376200205B40 /* VerifiedEmailAddresses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VerifiedEmailAddresses.m; sourceTree = "<group>"; };
 		B0F397441729376200205B40 /* CTCTGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTCTGlobal.h; sourceTree = "<group>"; };
 		B0F397451729376200205B40 /* CTCTGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTCTGlobal.m; sourceTree = "<group>"; };
-		C3007A3F180D643700D68F48 /* EmailSortedActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmailSortedActivity.h; sourceTree = "<group>"; };
-		C3007A40180D643700D68F48 /* EmailSortedActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailSortedActivity.m; sourceTree = "<group>"; };
-		C30EC316180D66F9003AA395 /* AllActivites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllActivites.h; sourceTree = "<group>"; };
-		C30EC317180D66F9003AA395 /* AllActivites.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllActivites.m; sourceTree = "<group>"; };
 		C30EC319180D8B2C003AA395 /* CollectionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionsViewController.h; path = CTCTContact/CollectionsViewController.h; sourceTree = SOURCE_ROOT; };
 		C30EC31A180D8B2E003AA395 /* CollectionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionsViewController.m; path = CTCTContact/CollectionsViewController.m; sourceTree = SOURCE_ROOT; };
 		C30EC31B180D8B30003AA395 /* CollectionsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CollectionsViewController.xib; path = CTCTContact/CollectionsViewController.xib; sourceTree = SOURCE_ROOT; };
@@ -409,10 +403,6 @@
 				B0F397271729376200205B40 /* TrackingActivity.m */,
 				B0F397281729376200205B40 /* TrackingSummary.h */,
 				B0F397291729376200205B40 /* TrackingSummary.m */,
-				C3007A3F180D643700D68F48 /* EmailSortedActivity.h */,
-				C3007A40180D643700D68F48 /* EmailSortedActivity.m */,
-				C30EC316180D66F9003AA395 /* AllActivites.h */,
-				C30EC317180D66F9003AA395 /* AllActivites.m */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -596,8 +586,6 @@
 				B0F397701729376300205B40 /* EmailCampaignService.m in Sources */,
 				B0F397711729376300205B40 /* VerifiedEmailAddresses.m in Sources */,
 				B0F397721729376300205B40 /* CTCTGlobal.m in Sources */,
-				C3007A41180D643800D68F48 /* EmailSortedActivity.m in Sources */,
-				C30EC318180D66F9003AA395 /* AllActivites.m in Sources */,
 				C30EC31C180D8B32003AA395 /* CollectionsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
