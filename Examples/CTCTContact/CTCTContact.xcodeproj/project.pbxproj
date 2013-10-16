@@ -73,6 +73,8 @@
 		C30EC31D180D8B32003AA395 /* CollectionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C30EC31B180D8B30003AA395 /* CollectionsViewController.xib */; };
 		C3534BBD180E983B005DEDCE /* AllActivites.m in Sources */ = {isa = PBXBuildFile; fileRef = C3534BBA180E983B005DEDCE /* AllActivites.m */; };
 		C3534BBE180E983B005DEDCE /* EmailSortedActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = C3534BBC180E983B005DEDCE /* EmailSortedActivity.m */; };
+		C3534BE7180EB199005DEDCE /* ContactTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3534BE5180EB199005DEDCE /* ContactTrackingViewController.m */; };
+		C3534BE8180EB199005DEDCE /* ContactTrackingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3534BE6180EB199005DEDCE /* ContactTrackingViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -196,6 +198,9 @@
 		C3534BBA180E983B005DEDCE /* AllActivites.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AllActivites.m; path = Tracking/AllActivites.m; sourceTree = "<group>"; };
 		C3534BBB180E983B005DEDCE /* EmailSortedActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailSortedActivity.h; path = Tracking/EmailSortedActivity.h; sourceTree = "<group>"; };
 		C3534BBC180E983B005DEDCE /* EmailSortedActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EmailSortedActivity.m; path = Tracking/EmailSortedActivity.m; sourceTree = "<group>"; };
+		C3534BE4180EB199005DEDCE /* ContactTrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactTrackingViewController.h; path = CTCTContact/Tracking/ContactTrackingViewController.h; sourceTree = SOURCE_ROOT; };
+		C3534BE5180EB199005DEDCE /* ContactTrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactTrackingViewController.m; path = CTCTContact/Tracking/ContactTrackingViewController.m; sourceTree = SOURCE_ROOT; };
+		C3534BE6180EB199005DEDCE /* ContactTrackingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ContactTrackingViewController.xib; path = CTCTContact/Tracking/ContactTrackingViewController.xib; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,6 +297,9 @@
 				B0F3972F1729376200205B40 /* HttpRequest */,
 				B0F397361729376200205B40 /* Services */,
 				B0F397431729376200205B40 /* Utilities */,
+				C3534BE4180EB199005DEDCE /* ContactTrackingViewController.h */,
+				C3534BE5180EB199005DEDCE /* ContactTrackingViewController.m */,
+				C3534BE6180EB199005DEDCE /* ContactTrackingViewController.xib */,
 			);
 			name = CTCTWrapper;
 			path = ../../../CTCTWrapper;
@@ -537,6 +545,7 @@
 				B0F397481729376200205B40 /* CTCTLoginViewController.xib in Resources */,
 				B0F397681729376300205B40 /* Config.plist in Resources */,
 				C30EC31D180D8B32003AA395 /* CollectionsViewController.xib in Resources */,
+				C3534BE8180EB199005DEDCE /* ContactTrackingViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,6 +608,7 @@
 				C30EC31C180D8B32003AA395 /* CollectionsViewController.m in Sources */,
 				C3534BBD180E983B005DEDCE /* AllActivites.m in Sources */,
 				C3534BBE180E983B005DEDCE /* EmailSortedActivity.m in Sources */,
+				C3534BE7180EB199005DEDCE /* ContactTrackingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

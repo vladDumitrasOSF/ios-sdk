@@ -16,13 +16,15 @@
 
 #import "ActivityService.h"
 #import "CollectionsViewController.h"
+#import "ContactTrackingViewController.h"
 
 @interface MainViewController () <CTCTLoginDelegate, UIActionSheetDelegate, UIPickerViewDataSource,UIPickerViewDelegate,UITextFieldDelegate>
 {
     NSMutableArray *filesArray;
     NSString       *selectedFile;
     
-    CollectionsViewController *contCol;
+    CollectionsViewController     *contCol;
+    ContactTrackingViewController *contrTrk;
 }
 
 @property (nonatomic, strong) NSArray               *contacts;
@@ -390,20 +392,25 @@
 
 - (void)updateNavbar
 {
-    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc]initWithTitle:@"Bulk activites" style:UIBarButtonItemStylePlain target:self action:@selector(upload)];
-    leftBtn.title = @"Upload File";
+    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc]initWithTitle:@"Upload" style:UIBarButtonItemStylePlain target:self action:@selector(upload)];
     
-    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc]initWithTitle:@"Bulk activites" style:UIBarButtonItemStylePlain target:self action:@selector(collections)];
-    leftBtn.title = @"Collection status";
+    UIBarButtonItem *rightBtn  = [[UIBarButtonItem alloc]initWithTitle:@"Bulk" style:UIBarButtonItemStylePlain target:self action:@selector(collections)];
+    UIBarButtonItem *rightBtn2 = [[UIBarButtonItem alloc]initWithTitle:@"Track" style:UIBarButtonItemStylePlain target:self action:@selector(tracking)];
+
     self.navigationItem.leftBarButtonItem = leftBtn;
-    self.navigationItem.rightBarButtonItem = rightBtn;
+    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:rightBtn,rightBtn2, nil];
 }
 
 - (void)collections
 {
     contCol = [[CollectionsViewController alloc]init];
-    
     [self.navigationController pushViewController:contCol animated:YES];
+}
+
+- (void)tracking
+{
+    contrTrk = [[ContactTrackingViewController alloc]init];
+    [self.navigationController pushViewController:contrTrk animated:YES];
 }
 #pragma mark - upload 
 
