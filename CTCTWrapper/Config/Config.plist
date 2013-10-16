@@ -5,11 +5,11 @@
 	<key>config</key>
 	<dict>
 		<key>consumer_secret</key>
-		<string></string>
+		<string>Tj5bUFsG3ynvtRdQ67SHsXDz</string>
 		<key>redirect_uri</key>
-		<string></string>
+		<string>http://google.com</string>
 		<key>api_key</key>
-		<string></string>
+		<string>74hvvcfvvwjtgdsuhfau6djb</string>
 	</dict>
 	<key>errors</key>
 	<dict>
@@ -92,7 +92,7 @@
 		<key>contact_tracking_by_email_campaign</key>
 		<string>contacts/%@/tracking/reports/summaryByCampaign</string>
 		<key>contact_tracking_all</key>
-		<string>contacts/@/tracking</string>
+		<string>contacts/%@/tracking</string>
 		<key>membership_list</key>
 		<string>lists/%@/contacts</string>
 		<key>verified_email</key>
