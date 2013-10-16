@@ -71,6 +71,8 @@
 		B0F397721729376300205B40 /* CTCTGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F397451729376200205B40 /* CTCTGlobal.m */; };
 		C30EC31C180D8B32003AA395 /* CollectionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C30EC31A180D8B2E003AA395 /* CollectionsViewController.m */; };
 		C30EC31D180D8B32003AA395 /* CollectionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C30EC31B180D8B30003AA395 /* CollectionsViewController.xib */; };
+		C3534BBD180E983B005DEDCE /* AllActivites.m in Sources */ = {isa = PBXBuildFile; fileRef = C3534BBA180E983B005DEDCE /* AllActivites.m */; };
+		C3534BBE180E983B005DEDCE /* EmailSortedActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = C3534BBC180E983B005DEDCE /* EmailSortedActivity.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -190,6 +192,10 @@
 		C30EC319180D8B2C003AA395 /* CollectionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionsViewController.h; path = CTCTContact/CollectionsViewController.h; sourceTree = SOURCE_ROOT; };
 		C30EC31A180D8B2E003AA395 /* CollectionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionsViewController.m; path = CTCTContact/CollectionsViewController.m; sourceTree = SOURCE_ROOT; };
 		C30EC31B180D8B30003AA395 /* CollectionsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CollectionsViewController.xib; path = CTCTContact/CollectionsViewController.xib; sourceTree = SOURCE_ROOT; };
+		C3534BB9180E983B005DEDCE /* AllActivites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AllActivites.h; path = Tracking/AllActivites.h; sourceTree = "<group>"; };
+		C3534BBA180E983B005DEDCE /* AllActivites.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AllActivites.m; path = Tracking/AllActivites.m; sourceTree = "<group>"; };
+		C3534BBB180E983B005DEDCE /* EmailSortedActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailSortedActivity.h; path = Tracking/EmailSortedActivity.h; sourceTree = "<group>"; };
+		C3534BBC180E983B005DEDCE /* EmailSortedActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EmailSortedActivity.m; path = Tracking/EmailSortedActivity.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +325,10 @@
 		B0F396F11729376200205B40 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				C3534BB9180E983B005DEDCE /* AllActivites.h */,
+				C3534BBA180E983B005DEDCE /* AllActivites.m */,
+				C3534BBB180E983B005DEDCE /* EmailSortedActivity.h */,
+				C3534BBC180E983B005DEDCE /* EmailSortedActivity.m */,
 				B0F396F21729376200205B40 /* Activites */,
 				B0F396FD1729376200205B40 /* Component.h */,
 				B0F396FE1729376200205B40 /* Component.m */,
@@ -587,6 +597,8 @@
 				B0F397711729376300205B40 /* VerifiedEmailAddresses.m in Sources */,
 				B0F397721729376300205B40 /* CTCTGlobal.m in Sources */,
 				C30EC31C180D8B32003AA395 /* CollectionsViewController.m in Sources */,
+				C3534BBD180E983B005DEDCE /* AllActivites.m in Sources */,
+				C3534BBE180E983B005DEDCE /* EmailSortedActivity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
