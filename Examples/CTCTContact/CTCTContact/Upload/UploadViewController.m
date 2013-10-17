@@ -101,26 +101,28 @@
     [loadingView showLoadingInView:self.view];
     if(self.listsTextField.text.length > 0)
     {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.fileTextField.text];
-    
-    NSString *listsString = [self createListString];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.fileTextField.text];
         
-    HttpResponse *response =  [ActivityService removeContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath fromLists:listsString];
-    [loadingView hideLoading];    
-    if(response.statusCode != 201)
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [alert show];
-    }
-    else
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        NSString *listsString = [self createListString];
+            
+        HttpResponse *response =  [ActivityService removeContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath fromLists:listsString];
+        [loadingView hideLoading];    
+        if(response.statusCode != 201)
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            [alert show];
+        }
+        else
+                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
 
     }
     else
+    {
+        [loadingView hideLoading];
         [[[UIAlertView alloc] initWithTitle:@"Error" message:@"insert at least one list to add/ remove contacts from" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-    
+    }
 }
 
 - (IBAction)onAddUpload:(id)sender
@@ -147,7 +149,10 @@
             [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
     }
     else
+    {
+        [loadingView hideLoading];
         [[[UIAlertView alloc] initWithTitle:@"Error" message:@"insert at least one list to add/ remove contacts from" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+    }
 }
 
 #pragma mark - gesture recognizer
