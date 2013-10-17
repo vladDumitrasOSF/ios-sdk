@@ -8,8 +8,11 @@
 
 #import "ContactTrackingViewController.h"
 
+#import "CampaignTrackingService.h"
 #import "ContactTrackingService.h"
+#import "EmailCampaignService.h"
 #import "ContactsCollection.h"
+#import "EmailCampaign.h"
 #import "CTCTGlobal.h"
 #import "ResultSet.h"
 
@@ -34,6 +37,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *contactTextField;
 @property (weak, nonatomic) IBOutlet UITextField *activityTextField;
 
+@property (weak, nonatomic) IBOutlet UILabel *idLable;
 @end
 
 @implementation ContactTrackingViewController
@@ -55,9 +59,28 @@
     [self customizeViews];
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     
+    responseContacts = self.trackEmailCampaigns ? [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token withALimitOf:nil] : [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token withLimitOf:nil];
+    
+    if(self.trackEmailCampaigns)
+    {
+        ResultSet *set = responseContacts.data;
+        for (EmailCampaign *cont in set.results)
+        {
+            [contactsArray addObject:[NSString stringWithFormat:@"%@",cont.name]];
+        }
+    }
+    else
+    {
+        ResultSet *set = responseContacts.data;
+        for (Contact *cont in set.results)
+        {
+            [contactsArray addObject:[NSString stringWithFormat:@"%@ %@",cont.firstName,cont.lastName]];
+        }
+    }
 }
 - (void)didReceiveMemoryWarning
 {
@@ -72,27 +95,29 @@
     [self setCrationDateTextField:nil];
     [self setContactTextField:nil];
     [self setActivityTextField:nil];
+    [self setIdLable:nil];
     [super viewDidUnload];
 }
 
 - (void)customizeViews
 {
+    self.title = self.trackEmailCampaigns ? @"Email campaign tracking" : @"Contact tracking";
+    
+    self.idLable.text = self.trackEmailCampaigns ? @"Campaign" : @"Contact" ;
+    
     self.limitTextField.delegate       = self;
     self.crationDateTextField.delegate = self;
     self.contactTextField.delegate     = self;
     self.activityTextField.delegate    = self;
     
-    activityArray = [[NSMutableArray alloc] initWithObjects:@"Select Activity",@"All Activites",@"Click",@"Forward",@"Send",@"Open",@"Unsubscribes", nil];
+    if(!self.trackEmailCampaigns)
+        activityArray = [[NSMutableArray alloc] initWithObjects:@"Select Activity",@"All Activites",@"Click",@"Forward",@"Send",@"Open",@"Unsubscribes", nil];
+    else
+        activityArray = [[NSMutableArray alloc] initWithObjects:@"Select Activity",@"Bounce",@"Click",@"Forward",@"Send",@"Open",@"Opt-Out",@"Click by link", nil];
+    
     contactsArray = [[NSMutableArray alloc] initWithObjects:@"Select Contact", nil];
     
     activityResponseArray = [[NSMutableArray alloc] init];
-    
-    responseContacts = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token withLimitOf:nil];
-    
-    for (Contact *cont in responseContacts.data)
-    {
-        [contactsArray addObject:[NSString stringWithFormat:@"%@ %@",cont.firstName,cont.lastName]];
-    }
     
     dateFormat = [[NSDateFormatter alloc]init];
     [dateFormat setDateFormat:@"yyyy-MM-dd"];
@@ -159,9 +184,8 @@
     if(row == 0)
     {
         self.activityTextField.text = @"";
-        self.contactTextField.text = @"";
+        self.contactTextField.text  = @"";
     }
-    
 }
 - (IBAction)dateChanged:(id)sender
 {
@@ -209,114 +233,219 @@
        HttpResponse *response = nil;
        ResultSet *set = nil;
         
-       NSUInteger indexContact = [contactsArray indexOfObject:self.contactTextField.text];
-       Contact *cont = responseContacts.data[indexContact];
-       NSDate *time = (self.crationDateTextField.text.length > 0) ? self.timePickerView.date : nil;
-        
-      NSString *message = @"";
-        
       [activityResponseArray removeAllObjects];
-        switch (index)
-        {
-            case 1:{ response = [ContactTrackingService getAllContactActivitesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-                
-                if(response.errors.count > 0)
-                {
-                    ERROR = YES;
-                }
-                
-                set = response.data;
-                for (AllActivites *act in set.results)
-                {
-                    [activityResponseArray addObject:[NSString stringWithFormat:@"type:%@ campaignID: %@",act.activityType,act.campaignId]];
-                }
-            }
-            break;
-                
-            case 2:{ response = [ContactTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-                
-                if(response.errors.count > 0)
-                {
-                    ERROR = YES;
-                }
-                
-                set = response.data;
-                for (ClickActivity *act in set.results)
-                {
-                    [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
-                }
-            }
-            break;
-                
-            case 3:{ response = [ContactTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-                
-                if(response.errors.count > 0)
-                {
-                    ERROR = YES;
-                }
-                
-                set = response.data;
-                for (ForwardActivity *act in set.results)
-                {
-                    [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
-                }
-            }
-                break;
-                
-            case 4:{ response = [ContactTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-               
-                if(response.errors.count > 0)
-                {
-                    ERROR = YES;
-                }
-                
-               set = response.data;
-                for (SendActivity *act in set.results)
-                {
-                    [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
-                }
-            }
-                break;
-            case 5:{ response = [ContactTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-                
-                if(response.errors.count > 0)
-                {
-                    ERROR = YES;
-                }
-                
-                set = response.data;
-                for (OpenActivity *act in set.results)
-                {
-                    [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
-                }
-            }
-                break;
-                
-            case 6:{ response = [ContactTrackingService getUnsubscribesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-                
-                if(response.errors.count > 0)
-                {
-                    ERROR = YES;
-                }
-                
-                set = response.data;
-                for (OptOutActivity *act in set.results)
-                {
-                    [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
-                }
-            }
-                break;
-            default: break;
-        }
-        [self.trackingTableView reloadData];
+       
+      ERROR = self.trackEmailCampaigns ? [self trackEmailCampaigns:index response:response andSet:set] : [self trackContacts:index response:response andSet:set];
         
-        if(activityResponseArray.count == 0)
+      [self.trackingTableView reloadData];
+        
+      if(activityResponseArray.count == 0)
          [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
         else if(ERROR)
-                [[[UIAlertView alloc] initWithTitle:@"" message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
     }
     else
-        [[[UIAlertView alloc]initWithTitle:@"" message:@"Select at least a activity and a client" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+    {
+        if(self.trackEmailCampaigns)
+            [[[UIAlertView alloc]initWithTitle:@"" message:@"Select at least a activity and a campaign" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        else
+            [[[UIAlertView alloc]initWithTitle:@"" message:@"Select at least a activity and a client" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+    }
+}
+
+#pragma mark - tracking variations
+- (BOOL)trackContacts:(NSUInteger)index response:(HttpResponse *)response andSet:(ResultSet *)set
+{
+    NSUInteger indexContact = [contactsArray indexOfObject:self.contactTextField.text];
+    ResultSet *oldSet = responseContacts.data;
+    Contact *cont = oldSet.results[indexContact - 1];
+    NSDate *time = (self.crationDateTextField.text.length > 0) ? self.timePickerView.date : nil;
+
+    BOOL ERROR = NO;
+    
+    switch (index)
+    {
+        case 1:{ response = [ContactTrackingService getAllContactActivitesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (AllActivites *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"type:%@ campaignID: %@",act.activityType,act.campaignId]];
+            }
+        }
+            break;
+            
+        case 2:{ response = [ContactTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (ClickActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
+            }
+        }
+            break;
+            
+        case 3:{ response = [ContactTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (ForwardActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
+            }
+        }
+            break;
+            
+        case 4:{ response = [ContactTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (SendActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
+            }
+        }
+            break;
+        case 5:{ response = [ContactTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (OpenActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
+            }
+        }
+            break;
+            
+        case 6:{ response = [ContactTrackingService getUnsubscribesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (OptOutActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
+            }
+        }
+            break;
+        default: break;
+    }
+    return ERROR;
+}
+
+- (BOOL)trackEmailCampaigns:(NSUInteger)index response:(HttpResponse *)response andSet:(ResultSet *)set
+{
+    NSUInteger indexContact = [contactsArray indexOfObject:self.contactTextField.text];
+    ResultSet *oldSet = responseContacts.data;
+    EmailCampaign *cont = oldSet.results[indexContact - 1];
+    NSDate *time = (self.crationDateTextField.text.length > 0) ? self.timePickerView.date : nil;
+
+    BOOL ERROR = NO;
+  //  @"Opt-Out",@"Click by link",
+    switch (index)
+    {
+        case 1:{ response = [CampaignTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token campaignID:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (BounceActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"Bouce msg: %@",act.bounceMessage]];
+            }
+        }
+            break;
+            
+        case 2:{ response = [CampaignTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (ClickActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
+            }
+        }
+            break;
+            
+        case 3:{ response = [CampaignTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (ForwardActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
+            }
+        }
+            break;
+            
+        case 4:{ response = [CampaignTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (SendActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
+            }
+        }
+            break;
+        case 5:{ response = [CampaignTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (OpenActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
+            }
+        }
+            break;
+            
+        case 6:{ response = [CampaignTrackingService getOptOutsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+            
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (OptOutActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
+            }
+        }
+            break;
+        case 7:{ response = [CampaignTrackingService getClicksByLinkwithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId  linkId:@"1" creationDate:time andALimitOf:self.limitTextField.text];
+            if(response.errors.count > 0)
+                ERROR = YES;
+            
+            set = response.data;
+            for (OptOutActivity *act in set.results)
+            {
+                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
+            }
+        }
+            break;
+        default: break;
+    }
+    return ERROR;
 }
 
 @end

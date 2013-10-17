@@ -8,35 +8,32 @@
 
 #import "MainViewController.h"
 #import "CTCTLoginViewController.h"
+#import "UploadViewController.h"
 #import "ContactsCollection.h"
 #import "LoadingView.h"
 #import "ContactViewController.h"
 #import "CTCTGlobal.h"
 #import "VerifiedEmailAddresses.h"
+#import "ResultSet.h"
 
 #import "ActivityService.h"
 #import "CollectionsViewController.h"
 #import "ContactTrackingViewController.h"
 
-@interface MainViewController () <CTCTLoginDelegate, UIActionSheetDelegate, UIPickerViewDataSource,UIPickerViewDelegate,UITextFieldDelegate>
+@interface MainViewController () <CTCTLoginDelegate,UITextFieldDelegate>
 {
     NSMutableArray *filesArray;
     NSString       *selectedFile;
     
     CollectionsViewController     *contCol;
     ContactTrackingViewController *contrTrk;
+    UploadViewController          *uploadController;
 }
 
 @property (nonatomic, strong) NSArray               *contacts;
 @property (nonatomic, strong) LoadingView           *loadingView;
 @property (nonatomic, strong) ContactViewController *contactVC;
 @property (nonatomic, readwrite) BOOL               addContact;
-
-// upload view
-@property (strong, nonatomic) IBOutlet UIView     *uploadView;
-@property (weak, nonatomic) IBOutlet UIPickerView *filePicker;
-@property (weak, nonatomic) IBOutlet UIButton     *addRemoveButton;
-@property (weak, nonatomic) IBOutlet UITextField  *listTextField;
 
 @end
 
@@ -52,34 +49,20 @@
 {
     [super viewDidLoad];
     
-    self.title = @"Contacts";
+    self.title = @"Contact";
     self.loadingView = [[LoadingView alloc] initWithFrame:self.view.frame];
         
     self.contactVC = [[ContactViewController alloc] initWithNibName:@"ContactViewController" bundle:nil];
     self.contactVC.mainViewController = self;
     self.addContact = NO;
     
-    self.filePicker.delegate = self;
-    self.filePicker.dataSource = self;
-     filesArray = [[NSMutableArray alloc] init];
-    
-    self.listTextField.delegate = self;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeys)];
+    [self.view addGestureRecognizer:tap];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    NSError *error;
-    filesArray = [[NSMutableArray alloc] init];
-    NSString *documentsPath= [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    
-    NSArray* files= [[NSFileManager defaultManager] contentsOfDirectoryAtPath:documentsPath error:&error];
-    
-     [filesArray addObject:@"select a file"];
-    for (NSString* file in files) {
-        [filesArray addObject:file];
-    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -112,10 +95,6 @@
     [self setEmailTextField:nil];
     [self setTableView:nil];
     
-    [self setUploadView:nil];
-    [self setFilePicker:nil];
-    [self setAddRemoveButton:nil];
-    [self setListTextField:nil];
     [super viewDidUnload];
 }
 
@@ -130,15 +109,6 @@
 #pragma mark - IB
 - (IBAction)onSearch:(id)sender
 {
-  //   HttpResponse *resp = [ActivityService getStatusReportForLast50Activites:[CTCTGlobal shared].token];
-   // HttpResponse *resp = [ActivityService getActivityWithToken:[CTCTGlobal shared].token status:@"COMPLETE" andType:@"ADD_CONTACTS"];
-   // HttpResponse *response =  [ActivityService addContactsMultipartWithToken:[CTCTGlobal shared].token file:@"salut.txt" toLists:@"1"];
-  //  NSLog(@"DADA :%d",resp.statusCode);
-    //HttpResponse *response =  [ActivityService removeContactsMultipartWithToken:[CTCTGlobal shared].token withFileName:@"salut.txt" fromLists:@"1"]; //
-  //  HttpResponse *response =  [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:@"active"];
-  //   HttpResponse *response =  [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andModifiedSince:[NSDate date]];
-  //  HttpResponse *response =  [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andEmail:@"dumitras.rm.vlad@gmail.com" withALimitOf:@"10"];
-    
     if (self.emailTextField.text.length == 0)
     {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Enter email" message:@"Email address cannot be empty" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
@@ -166,7 +136,8 @@
             }
             else
             {
-                self.contacts = response.data;
+                ResultSet *set = response.data;
+                self.contacts = set.results;
                 if (self.contacts.count == 0)
                     self.addContact = YES;
             }
@@ -182,52 +153,6 @@
 
     }
 }
-- (IBAction)onAddRemove:(UIButton *)sender
-{
-    if(self.listTextField.text.length > 0)
-    {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:selectedFile];
-        
-        if([sender.titleLabel.text isEqualToString:@"Add"])
-        {
-           HttpResponse *response =  [ActivityService addContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath toLists:self.listTextField.text];
-            if(response.statusCode != 201)
-            {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                [alert show];
-            }
-            else
-            {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                [alert show];
-            }
-        }
-        else
-        {
-            HttpResponse *response =  [ActivityService removeContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath fromLists:self.listTextField.text];
-            if(response.statusCode != 201)
-            {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                [alert show];
-            }
-            else
-            {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                [alert show];
-            }
-        }
-    }
-    else
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"insert at least one list to add/ remove contacts from" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [alert show];
-    }
-    [self hideLoading];
-    [self.uploadView removeFromSuperview];
-}
-
 #pragma mark - CTCTLogin delegate
 
 - (void)loginViewController:(CTCTLoginViewController *)loginViewController didLoginWithAccessToken:(NSString *)accessToken
@@ -392,13 +317,11 @@
 
 - (void)updateNavbar
 {
-    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc]initWithTitle:@"Upload" style:UIBarButtonItemStylePlain target:self action:@selector(upload)];
-    
+    UIBarButtonItem *leftBtn   = [[UIBarButtonItem alloc]initWithTitle:@"Upload" style:UIBarButtonItemStylePlain target:self action:@selector(upload)];
     UIBarButtonItem *rightBtn  = [[UIBarButtonItem alloc]initWithTitle:@"Bulk" style:UIBarButtonItemStylePlain target:self action:@selector(collections)];
-    UIBarButtonItem *rightBtn2 = [[UIBarButtonItem alloc]initWithTitle:@"Track" style:UIBarButtonItemStylePlain target:self action:@selector(tracking)];
 
-    self.navigationItem.leftBarButtonItem = leftBtn;
-    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:rightBtn,rightBtn2, nil];
+    self.navigationItem.leftBarButtonItem  = leftBtn;
+    self.navigationItem.rightBarButtonItem = rightBtn;
 }
 
 - (void)collections
@@ -407,54 +330,29 @@
     [self.navigationController pushViewController:contCol animated:YES];
 }
 
-- (void)tracking
+- (IBAction)contactTracking:(UIButton *)sender
 {
     contrTrk = [[ContactTrackingViewController alloc]init];
+    contrTrk.trackEmailCampaigns = NO;
+    [self.navigationController pushViewController:contrTrk animated:YES];
+}
+
+- (IBAction)trackingEmil:(UIButton *)sender
+{
+    contrTrk = [[ContactTrackingViewController alloc]init];
+    contrTrk.trackEmailCampaigns = YES;
     [self.navigationController pushViewController:contrTrk animated:YES];
 }
 #pragma mark - upload 
 
 - (void)upload
 {
-    [[[UIActionSheet alloc]initWithTitle:@"Bulk Activites" delegate:self cancelButtonTitle:@"Cance" destructiveButtonTitle:nil otherButtonTitles:@"Add contacts from file",@"Remove contacts from file", nil] showInView:self.view];
+    uploadController = [[UploadViewController alloc]init];
+    [self.navigationController pushViewController:uploadController animated:YES];
 }
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)hideKeys
 {
-    if(buttonIndex != 2)
-    {
-        [self showLoading];
-        self.uploadView.frame = CGRectMake(0, 0, 320, self.uploadView.frame.size.height);
-        [self.view addSubview:self.uploadView];
-        [self.listTextField becomeFirstResponder];
-    }
-    
-    if (buttonIndex == 0)
-        [self.addRemoveButton setTitle:@"Add" forState:UIControlStateNormal];
-    else
-        [self.addRemoveButton setTitle:@"Remove" forState:UIControlStateNormal];
+    [self.view endEditing:YES];
 }
-
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-{
-    if(row != 0)
-    {
-        selectedFile = filesArray[row];
-    }
-}
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
-    return 1;
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-{
-    return filesArray.count;
-}
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
-{
-    return filesArray[row];
-}
-
 @end

@@ -11,6 +11,7 @@
 #import "ContactsCollection.h"
 #import "LoadingView.h"
 #import "CTCTGlobal.h"
+#import "ResultSet.h"
 
 @interface CollectionsViewController ()<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,UIGestureRecognizerDelegate>
 {
@@ -116,7 +117,9 @@
    self.statusLable.text = status;
    
    HttpResponse *response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:status withAlimitOf:self.textField.text];
-   resultsArray = (NSArray *)response.data;
+    
+   ResultSet *set = response.data;
+   resultsArray = set.results;
 
    if(resultsArray.count == 0)
       [[[UIAlertView alloc]initWithTitle:@"" message:@"No Results match this criteria" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];

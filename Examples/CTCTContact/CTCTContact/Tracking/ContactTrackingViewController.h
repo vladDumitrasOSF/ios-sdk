@@ -10,4 +10,6 @@
 
 @interface ContactTrackingViewController : UIViewController
 
+@property (readwrite, nonatomic) BOOL trackEmailCampaigns;
+
 @end
