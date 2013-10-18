@@ -113,7 +113,7 @@
     self.activityTextField.delegate    = self;
     
     if(!self.trackEmailCampaigns)
-        activityArray = [[NSMutableArray alloc] initWithObjects:@"Select Activity",@"All Activites",@"Click",@"Forward",@"Send",@"Open",@"Unsubscribes", nil];
+        activityArray = [[NSMutableArray alloc] initWithObjects:@"Select Activity",@"All Activites",@"Bounce",@"Click",@"Forward",@"Send",@"Open",@"Unsubscribes",@"Contact by email", nil];
     else
         activityArray = [[NSMutableArray alloc] initWithObjects:@"Select Activity",@"Bounce",@"Click",@"Forward",@"Send",@"Open",@"Opt-Out",@"Click by link", nil];
     
@@ -185,12 +185,37 @@
   else
       self.contactTextField.text = contactsArray[row];
 
+    [self parameterExceptions:row];
+}
+
+- (void)parameterExceptions:(NSInteger )row
+{
     if(row == 0)
     {
         self.activityTextField.text = @"";
         self.contactTextField.text  = @"";
     }
+    
+    if(!self.trackEmailCampaigns && row == activityArray.count -1)
+    {
+        self.limitTextField.text = @"";
+        self.crationDateTextField.text  = @"";
+        self.crationDateTextField.enabled = NO;
+        self.limitTextField.enabled = NO;
+    }
+    else
+    {
+        self.crationDateTextField.enabled = YES;
+        self.limitTextField.enabled = YES;
+    }
+    
+    if(!self.trackEmailCampaigns && row == 2)
+    {
+        self.crationDateTextField.text  = @"";
+        self.crationDateTextField.enabled = NO;
+    }
 }
+
 - (IBAction)dateChanged:(id)sender
 {
     NSString *dateString = [dateFormat stringFromDate:[self.timePickerView date]];
@@ -269,15 +294,49 @@
                    
                     [loadingView hideLoading];
                    
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (AllActivites *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"type:%@ campaignID: %@",act.activityType,act.campaignId]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
+        }
+            break;
+        
+        case 2:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [loadingView hideLoading];
+                    
+                    ResultSet *set = response.data;
+                    for (BounceActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.bounceDate]];
+                    }
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
                     
                     [self.trackingTableView reloadData];
@@ -287,7 +346,7 @@
         }
             break;
             
-        case 2:{
+        case 3:{
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
@@ -297,16 +356,20 @@
                    
                     [loadingView hideLoading];
                    
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (ClickActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                   
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -314,7 +377,7 @@
         }
             break;
             
-        case 3:{ 
+        case 4:{
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
@@ -324,16 +387,20 @@
                    
                     [loadingView hideLoading];
                    
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (ForwardActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -341,7 +408,7 @@
         }
             break;
             
-        case 4:{ 
+        case 5:{
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
@@ -350,23 +417,27 @@
                    
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (SendActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
             dispatch_release(callService);
         }
             break;
-        case 5:{
+        case 6:{
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
@@ -375,16 +446,20 @@
                    
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (OpenActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -392,7 +467,7 @@
         }
             break;
             
-        case 6:{ 
+        case 7:{
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
@@ -402,16 +477,50 @@
                     
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (OptOutActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
+            break;
+        }
+        case 8:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getActivitesSortedByEmailCampaignWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [loadingView hideLoading];
+                    
+                                    
+                    for (EmailSortedActivity *act in response.data)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"campaignId:%@",act.campaignId]];
+                    }
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -441,16 +550,20 @@
                    
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (BounceActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"Bouce msg: %@",act.bounceMessage]];
                     }
-                    if(activityResponseArray.count == 0)
+                   
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -468,16 +581,21 @@
                    
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (ClickActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -495,16 +613,20 @@
                    
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (ForwardActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                   
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -522,16 +644,20 @@
                     
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (SendActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                   
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -547,16 +673,20 @@
                     
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (OpenActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -574,16 +704,20 @@
                     
                     [loadingView hideLoading];
                     
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
                     ResultSet *set = response.data;
                     for (OptOutActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
                     }
-                    if(activityResponseArray.count == 0)
+                    
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
@@ -599,17 +733,21 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
                     [loadingView hideLoading];
-                    
-                    if(response.errors.count > 0)
-                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-                    
+                                       
                     ResultSet *set = response.data;
                     for (OptOutActivity *act in set.results)
                     {
                         [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
                     }
-                    if(activityResponseArray.count == 0)
+
+                    if(response.errors.count > 0)
+                    {
+                        HttpError *err = [response.errors objectAtIndex:0];
+                        [[[UIAlertView alloc] initWithTitle:@"Error" message:err.message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    }
+                    else if(activityResponseArray.count == 0)
                         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
                     [self.trackingTableView reloadData];
                 });
             });
