@@ -106,17 +106,24 @@
         NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.fileTextField.text];
         
         NSString *listsString = [self createListString];
+     
+        dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+        dispatch_async(callService, ^{
             
-        HttpResponse *response =  [ActivityService removeContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath fromLists:listsString];
-        [loadingView hideLoading];    
-        if(response.statusCode != 201)
-        {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-            [alert show];
-        }
-        else
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-
+            HttpResponse *response =  [ActivityService removeContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath fromLists:listsString];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                if(response.statusCode != 201)
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                else
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                
+               [loadingView hideLoading];
+                
+            });
+        });
+        dispatch_release(callService);
     }
     else
     {
@@ -137,16 +144,23 @@
         
         NSString *listsString = [self createListString];
         
-        HttpResponse *response =  [ActivityService addContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath toLists:listsString];
-        
-        [loadingView hideLoading];
-        if(response.statusCode != 201)
-        {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-            [alert show];
-        }
-        else
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+        dispatch_async(callService, ^{
+            
+            HttpResponse *response =  [ActivityService addContactsMultipartWithToken:[CTCTGlobal shared].token withFile:filePath toLists:listsString];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                if(response.statusCode != 201)
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:((HttpError*)[response.errors objectAtIndex:0]).message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                else
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                
+                [loadingView hideLoading];
+                
+            });
+        });
+        dispatch_release(callService);
     }
     else
     {

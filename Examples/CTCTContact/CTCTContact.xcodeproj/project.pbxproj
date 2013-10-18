@@ -258,6 +258,9 @@
 				B029C41B17046F0F005B4FE2 /* MainViewController.h */,
 				B029C41C17046F0F005B4FE2 /* MainViewController.m */,
 				B029C41E17046F0F005B4FE2 /* MainViewController.xib */,
+				C308798B180FEF6C00B493AD /* UploadViewController.h */,
+				C308798C180FEF6D00B493AD /* UploadViewController.m */,
+				C308798D180FEF6D00B493AD /* UploadViewController.xib */,
 				C3534BE4180EB199005DEDCE /* ContactTrackingViewController.h */,
 				C3534BE5180EB199005DEDCE /* ContactTrackingViewController.m */,
 				C3534BE6180EB199005DEDCE /* ContactTrackingViewController.xib */,
@@ -305,9 +308,6 @@
 				B0F3972F1729376200205B40 /* HttpRequest */,
 				B0F397361729376200205B40 /* Services */,
 				B0F397431729376200205B40 /* Utilities */,
-				C308798B180FEF6C00B493AD /* UploadViewController.h */,
-				C308798C180FEF6D00B493AD /* UploadViewController.m */,
-				C308798D180FEF6D00B493AD /* UploadViewController.xib */,
 			);
 			name = CTCTWrapper;
 			path = ../../../CTCTWrapper;

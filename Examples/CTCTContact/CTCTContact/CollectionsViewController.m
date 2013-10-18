@@ -17,6 +17,8 @@
 {
     NSString *status;
     NSArray *resultsArray;
+    
+    LoadingView *loadingView;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *statusLable;
@@ -68,6 +70,8 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(CloseKeys)];
     [self.view addGestureRecognizer:tap];
+    
+    loadingView = [[LoadingView alloc]initWithFrame:self.view.frame];
 }
 
 - (void)didReceiveMemoryWarning
@@ -115,16 +119,25 @@
 - (void)startCall
 {
    self.statusLable.text = status;
-   
-   HttpResponse *response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:status withAlimitOf:self.textField.text];
-    
-   ResultSet *set = response.data;
-   resultsArray = set.results;
-
-   if(resultsArray.count == 0)
-      [[[UIAlertView alloc]initWithTitle:@"" message:@"No Results match this criteria" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-    
-  [self.tableView reloadData];
+    [loadingView showLoadingInView:self.view];
+    dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+    dispatch_async(callService, ^{
+        
+        HttpResponse *response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:status withAlimitOf:self.textField.text];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [loadingView hideLoading];
+            ResultSet *set = response.data;
+            resultsArray = set.results;
+            
+            if(resultsArray.count == 0)
+                [[[UIAlertView alloc]initWithTitle:@"" message:@"No Results match this criteria" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            
+            [self.tableView reloadData];           
+        });
+    });
+    dispatch_release(callService);
 }
 
 - (void)CloseKeys

@@ -13,6 +13,7 @@
 #import "EmailCampaignService.h"
 #import "ContactsCollection.h"
 #import "EmailCampaign.h"
+#import "LoadingView.h"
 #import "CTCTGlobal.h"
 #import "ResultSet.h"
 
@@ -25,6 +26,7 @@
     NSDateFormatter *dateFormat;
     
     HttpResponse *responseContacts;
+    LoadingView  *loadingView;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *trackingTableView;
@@ -122,6 +124,8 @@
     dateFormat = [[NSDateFormatter alloc]init];
     [dateFormat setDateFormat:@"yyyy-MM-dd"];
     [dateFormat setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    
+    loadingView = [[LoadingView alloc]initWithFrame:self.view.frame];
 }
 
 #pragma mark - text field
@@ -223,26 +227,18 @@
 #pragma mark - button actions
 - (IBAction)onTrack:(id)sender
 {
-    BOOL ERROR = NO;
-    
     [self.view endEditing:YES];
     NSUInteger index = [activityArray indexOfObject:self.activityTextField.text];
 
     if(index > 0 && self.contactTextField.text.length > 0)
     {
-       HttpResponse *response = nil;
-       ResultSet *set = nil;
-        
       [activityResponseArray removeAllObjects];
        
-      ERROR = self.trackEmailCampaigns ? [self trackEmailCampaigns:index response:response andSet:set] : [self trackContacts:index response:response andSet:set];
-        
-      [self.trackingTableView reloadData];
-        
-      if(activityResponseArray.count == 0)
-         [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
-        else if(ERROR)
-                [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+      [loadingView showLoadingInView:self.view];
+      if( self.trackEmailCampaigns)
+          [self trackEmailCampaigns:index];
+      else
+          [self trackContacts:index];
     }
     else
     {
@@ -254,198 +250,373 @@
 }
 
 #pragma mark - tracking variations
-- (BOOL)trackContacts:(NSUInteger)index response:(HttpResponse *)response andSet:(ResultSet *)set
+- (void)trackContacts:(NSUInteger)index
 {
     NSUInteger indexContact = [contactsArray indexOfObject:self.contactTextField.text];
     ResultSet *oldSet = responseContacts.data;
     Contact *cont = oldSet.results[indexContact - 1];
     NSDate *time = (self.crationDateTextField.text.length > 0) ? self.timePickerView.date : nil;
 
-    BOOL ERROR = NO;
-    
     switch (index)
     {
-        case 1:{ response = [ContactTrackingService getAllContactActivitesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (AllActivites *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"type:%@ campaignID: %@",act.activityType,act.campaignId]];
-            }
+        case 1:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getAllContactActivitesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                   
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (AllActivites *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"type:%@ campaignID: %@",act.activityType,act.campaignId]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
             
-        case 2:{ response = [ContactTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (ClickActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
-            }
+        case 2:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                   
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (ClickActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
             
-        case 3:{ response = [ContactTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (ForwardActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
-            }
+        case 3:{ 
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                   
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (ForwardActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
             
-        case 4:{ response = [ContactTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (SendActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
-            }
+        case 4:{ 
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (SendActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
-        case 5:{ response = [ContactTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (OpenActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
-            }
+        case 5:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (OpenActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
             
-        case 6:{ response = [ContactTrackingService getUnsubscribesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (OptOutActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
-            }
+        case 6:{ 
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [ContactTrackingService getUnsubscribesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (OptOutActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
         default: break;
     }
-    return ERROR;
 }
 
-- (BOOL)trackEmailCampaigns:(NSUInteger)index response:(HttpResponse *)response andSet:(ResultSet *)set
+- (void)trackEmailCampaigns:(NSUInteger)index
 {
     NSUInteger indexContact = [contactsArray indexOfObject:self.contactTextField.text];
     ResultSet *oldSet = responseContacts.data;
     EmailCampaign *cont = oldSet.results[indexContact - 1];
     NSDate *time = (self.crationDateTextField.text.length > 0) ? self.timePickerView.date : nil;
-
-    BOOL ERROR = NO;
-  //  @"Opt-Out",@"Click by link",
+    
     switch (index)
     {
-        case 1:{ response = [CampaignTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token campaignID:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (BounceActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"Bouce msg: %@",act.bounceMessage]];
-            }
+        case 1:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [CampaignTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token campaignID:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (BounceActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"Bouce msg: %@",act.bounceMessage]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
             
-        case 2:{ response = [CampaignTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (ClickActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
-            }
+        case 2:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [CampaignTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (ClickActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.clickDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
             
-        case 3:{ response = [CampaignTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (ForwardActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
-            }
+        case 3:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [CampaignTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (ForwardActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.forwardDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
             
-        case 4:{ response = [CampaignTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+        case 4:{
             
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (SendActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
-            }
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse * response = [CampaignTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (SendActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.sendDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
             break;
-        case 5:{ response = [CampaignTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (OpenActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
-            }
-        }
+        case 5:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [CampaignTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (OpenActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.openDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
+                    }
             break;
             
-        case 6:{ response = [CampaignTrackingService getOptOutsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
-            
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (OptOutActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
+        case 6:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = [CampaignTrackingService getOptOutsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (OptOutActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
             }
-        }
             break;
-        case 7:{ response = [CampaignTrackingService getClicksByLinkwithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId  linkId:@"1" creationDate:time andALimitOf:self.limitTextField.text];
-            if(response.errors.count > 0)
-                ERROR = YES;
-            
-            set = response.data;
-            for (OptOutActivity *act in set.results)
-            {
-                [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
-            }
+        case 7:{
+            dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+            dispatch_async(callService, ^{
+                
+                HttpResponse *response = response = [CampaignTrackingService getClicksByLinkwithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId  linkId:@"1" creationDate:time andALimitOf:self.limitTextField.text];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [loadingView hideLoading];
+                    
+                    if(response.errors.count > 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message:@"Response came with Errors" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    
+                    ResultSet *set = response.data;
+                    for (OptOutActivity *act in set.results)
+                    {
+                        [activityResponseArray addObject:[NSString stringWithFormat:@"date:%@",act.unsubscribeDate]];
+                    }
+                    if(activityResponseArray.count == 0)
+                        [[[UIAlertView alloc] initWithTitle:@"" message: @"No entries with the selected filters" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                    [self.trackingTableView reloadData];
+                });
+            });
+            dispatch_release(callService);
         }
-            break;
+             break;
         default: break;
     }
-    return ERROR;
 }
-
 @end
