@@ -22,6 +22,8 @@
     NSArray         *resultsArray;
     NSDateFormatter *dateFormat;
     
+    NSArray         *listArray;
+    
     LoadingView *loadingView;
 }
 
@@ -97,6 +99,14 @@ typedef enum
     [dateFormat setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     
     selectedCall = 0;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    HttpResponse *response = [ListsCollection listsWithAccessToken:[CTCTGlobal shared].token andModificationDate:nil];
+    listArray = [[NSMutableArray alloc] initWithArray:response.data];
 }
 
 - (void)didReceiveMemoryWarning
@@ -294,17 +304,23 @@ typedef enum
         HttpResponse *response = nil;
         
         switch (selectedCall) {
-            case CONTACT_CALL: response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andModificationDate:[self.datePicker date]];
+            case CONTACT_CALL: response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andModifiedSince:[self.datePicker date]];
                 break;
             case LIST_CALL: response = [ListsCollection listsWithAccessToken:[CTCTGlobal shared].token andModificationDate:[self.datePicker date]];
                 break;
                 
-            case EMAIL_CALL: response = [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token andModificationDate:[self.datePicker date]];
+            case EMAIL_CALL: response = [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token modificationDate:[self.datePicker date]];
                 break;
                 
-            case MEMBERSHIP_CALL: response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:@"1876010237" withModificationDate:[self.datePicker date] withAlimitOf:nil];
+            case MEMBERSHIP_CALL:
+            {
+                ContactList *list = 0;
+                if(listArray)
+                    list = [listArray objectAtIndex:0];
+                
+                response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:list.listId withModificationDate:[self.datePicker date] withAlimitOf:nil];
                 break;
-        
+            }
             default: break;
         }
       
