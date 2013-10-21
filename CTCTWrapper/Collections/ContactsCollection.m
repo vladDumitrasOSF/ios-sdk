@@ -16,7 +16,7 @@
 // Get an array of contacts
 // accessToken - Constant Contact OAuth2 access token
 // ----------------------------------------------------------------------------------------------------
-+ (HttpResponse *)contactsWithAccessToken:(NSString*)accessToken withLimitOf:(NSString *)limit
++ (HttpResponse *)contactsWithAccessToken:(NSString*)accessToken withLimitOf:(int)limit
 {    
     NSString *baseURL = [Config valueForType:@"endpoints" key:@"base_url"];
     NSString *endpoint = [Config valueForType:@"endpoints" key:@"contacts"];
@@ -26,7 +26,7 @@
     //-----token is set up as parameter, but it can also be sent in headers,
     //if it is then you must change the http request method too to acustom it
     if(limit)
-        httpQuery = [NSString stringWithFormat:@"%@&limit=%@", httpQuery, limit];
+        httpQuery = [NSString stringWithFormat:@"%@&limit=%d", httpQuery, limit];
     
     NSString *url = [NSString stringWithFormat:@"%@%@?%@", baseURL, endpoint, httpQuery];
     HttpResponse *response = [HttpRequest getWithUrl:url andHeaders:nil];
@@ -85,7 +85,7 @@
 // accessToken - Constant Contact OAuth2 access token
 // email - contact email address to search for
 // ----------------------------------------------------------------------------------------------------
-+ (HttpResponse *)contactsWithAccessToken:(NSString*)accessToken andEmail:(NSString*)email withALimitOf:(NSString *)limit
++ (HttpResponse *)contactsWithAccessToken:(NSString*)accessToken andEmail:(NSString*)email withALimitOf:(int)limit
 {    
     NSString *baseURL = [Config valueForType:@"endpoints" key:@"base_url"];
     NSString *endpoint = [Config valueForType:@"endpoints" key:@"contacts"];
@@ -93,7 +93,7 @@
     NSString *httpQuery = [NSString stringWithFormat:@"email=%@&access_token=%@&api_key=%@", email,accessToken,apiKey];
     
     if(limit)
-        httpQuery = [NSString stringWithFormat:@"%@&limit=%@", httpQuery, limit];
+        httpQuery = [NSString stringWithFormat:@"%@&limit=%d", httpQuery, limit];
 
     NSString *url = [NSString stringWithFormat:@"%@%@?%@", baseURL, endpoint, httpQuery];
     HttpResponse *response = [HttpRequest getWithUrl:url andHeaders:nil];
@@ -120,7 +120,7 @@
 // ----------------------------------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------------------------------
-+ (HttpResponse *)contactsWithAccessToken:(NSString*)accessToken andStatus:(NSString *)status withAlimitOf:(NSString *)limit
++ (HttpResponse *)contactsWithAccessToken:(NSString*)accessToken andStatus:(NSString *)status withAlimitOf:(int)limit
 {
     NSString *baseURL = [Config valueForType:@"endpoints" key:@"base_url"];
     NSString *endpoint = [Config valueForType:@"endpoints" key:@"contacts"];
@@ -128,7 +128,7 @@
     NSString *httpQuery = [NSString stringWithFormat:@"status=%@&access_token=%@&api_key=%@",status,accessToken,apiKey];
     
     if(limit)
-        httpQuery = [NSString stringWithFormat:@"%@&limit=%@", httpQuery, limit];
+        httpQuery = [NSString stringWithFormat:@"%@&limit=%d", httpQuery, limit];
     
     NSString *url = [NSString stringWithFormat:@"%@%@?%@", baseURL, endpoint, httpQuery];
     HttpResponse *response = [HttpRequest getWithUrl:url andHeaders:nil];

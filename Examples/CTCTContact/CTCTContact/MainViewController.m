@@ -127,7 +127,7 @@
         dispatch_queue_t callService = dispatch_queue_create("callService", nil);
         dispatch_async(callService, ^{
             
-            HttpResponse *response =  [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andEmail:self.emailTextField.text withALimitOf:nil];
+            HttpResponse *response =  [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andEmail:self.emailTextField.text withALimitOf:0];
             
             if(response.statusCode != 200)
             {

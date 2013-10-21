@@ -32,22 +32,22 @@
  * Get a set of campaigns
  *
  * @param NSString *accessToken - Constant Contact OAuth2 access token
- * @param NSString *limit - (optional) limits the number of results returned
+ * @param int limit - (optional) limits the number of results returned
  *
  * @return HttpResponse * - response containing either errors or data with all the campaigns of the user
  */
-+ (HttpResponse *)getCampaignsWithToken:(NSString *)accessToken withALimitOf:(NSString *)limit;
++ (HttpResponse *)getCampaignsWithToken:(NSString *)accessToken withALimitOf:(int)limit;
 
 /**
  * Get a set of campaigns
  *
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param NSString *status - the returned values are filtered by the sent status value
- * @param NSString *limit - (optional) limits the number of results returned
+ * @param int limit - (optional) limits the number of results returned
  *
  * @return HttpResponse * - response containing either errors or data with all the campaigns with the given status
  */
-+ (HttpResponse *)getCampaignsWithToken:(NSString *)accessToken status:(NSString *)status withALimitOf:(NSString *)limit;
++ (HttpResponse *)getCampaignsWithToken:(NSString *)accessToken status:(NSString *)status withALimitOf:(int)limit;
 
 /**
  * Get a set of campaigns

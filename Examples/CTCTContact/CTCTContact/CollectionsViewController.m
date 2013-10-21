@@ -211,9 +211,9 @@ typedef enum
         
         HttpResponse *response = nil;
         if(self.textField.text.length > 0)
-            response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:status withAlimitOf:self.textField.text];
+            response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:status withAlimitOf:[self.textField.text intValue]];
         else 
-            response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:status withAlimitOf:nil];
+            response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token andStatus:status withAlimitOf:0];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -361,7 +361,7 @@ typedef enum
             {
                 ContactList *list = contactListArray[selectedList - 1];
                 
-                response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:list.listId withModificationDate:[self.datePicker date] withAlimitOf:nil];
+                response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:list.listId withModificationDate:[self.datePicker date] withAlimitOf:0];
                 break;
             }
             default: break;
@@ -403,16 +403,16 @@ typedef enum
         HttpResponse *response = nil;
         
         switch (selectedCall) {
-            case CONTACT_CALL: response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token withLimitOf:self.textField.text];
+            case CONTACT_CALL: response = [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token withLimitOf:[self.textField.text intValue]];
                 break;
                 
-            case EMAIL_CALL: response = [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token withALimitOf:self.textField.text];
+            case EMAIL_CALL: response = [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token withALimitOf:[self.textField.text intValue]];
                 break;
                 
             case MEMBERSHIP_CALL:
             {
                 ContactList *list = contactListArray[selectedList - 1];
-                response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:list.listId withModificationDate:nil withAlimitOf:self.textField.text];
+                response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:list.listId withModificationDate:nil withAlimitOf:[self.textField.text intValue]];
                 break;
             }
             default:break;

@@ -65,7 +65,7 @@
 {
     [super viewDidAppear:animated];
     
-    responseContacts = self.trackEmailCampaigns ? [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token withALimitOf:nil] : [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token withLimitOf:nil];
+    responseContacts = self.trackEmailCampaigns ? [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token withALimitOf:0] : [ContactsCollection contactsWithAccessToken:[CTCTGlobal shared].token withLimitOf:0];
     
     if(self.trackEmailCampaigns)
     {
@@ -288,7 +288,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [ContactTrackingService getAllContactActivitesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [ContactTrackingService getAllContactActivitesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
@@ -319,7 +319,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [ContactTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [ContactTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
@@ -350,7 +350,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [ContactTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [ContactTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
@@ -381,7 +381,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [ContactTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [ContactTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
@@ -412,7 +412,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [ContactTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [ContactTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
                     [loadingView hideLoading];
@@ -441,7 +441,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [ContactTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [ContactTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
                     [loadingView hideLoading];
@@ -471,7 +471,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [ContactTrackingService getUnsubscribesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [ContactTrackingService getUnsubscribesWithAccessToken:[CTCTGlobal shared].token contactId:cont.contactId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
@@ -544,7 +544,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [CampaignTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token campaignID:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [CampaignTrackingService getBouncesWithAccessToken:[CTCTGlobal shared].token campaignID:cont.campaignId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
@@ -575,7 +575,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [CampaignTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [CampaignTrackingService getClicksWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
@@ -607,7 +607,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [CampaignTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [CampaignTrackingService getForwardsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
@@ -639,7 +639,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse * response = [CampaignTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse * response = [CampaignTrackingService getSendsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
                     [loadingView hideLoading];
@@ -668,7 +668,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [CampaignTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [CampaignTrackingService getOpensWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
                     [loadingView hideLoading];
@@ -698,7 +698,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = [CampaignTrackingService getOptOutsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = [CampaignTrackingService getOptOutsWithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
@@ -728,7 +728,7 @@
             dispatch_queue_t callService = dispatch_queue_create("callService", nil);
             dispatch_async(callService, ^{
                 
-                HttpResponse *response = response = [CampaignTrackingService getClicksByLinkwithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId  linkId:@"1" creationDate:time andALimitOf:self.limitTextField.text];
+                HttpResponse *response = response = [CampaignTrackingService getClicksByLinkwithAccessToken:[CTCTGlobal shared].token campaignId:cont.campaignId  linkId:@"1" creationDate:time andALimitOf:[self.limitTextField.text intValue]];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
