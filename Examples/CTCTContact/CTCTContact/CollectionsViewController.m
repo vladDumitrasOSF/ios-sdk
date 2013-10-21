@@ -15,14 +15,16 @@
 #import "CTCTGlobal.h"
 #import "ResultSet.h"
 
-@interface CollectionsViewController ()<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,UIGestureRecognizerDelegate>
+@interface CollectionsViewController ()<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,UIGestureRecognizerDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 {
     NSString        *status;
     int             selectedCall;
+    int             selectedList;
     NSArray         *resultsArray;
     NSDateFormatter *dateFormat;
     
-    NSArray         *listArray;
+    NSMutableArray  *listArray;
+    NSMutableArray  *contactListArray;
     
     LoadingView *loadingView;
 }
@@ -39,6 +41,8 @@ typedef enum
 @property (weak, nonatomic) IBOutlet UILabel *statusLable;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 @property (weak, nonatomic) IBOutlet UITextField *dateTextField;
+@property (weak, nonatomic) IBOutlet UITextField *listTextField;
+@property (strong, nonatomic) IBOutlet UIPickerView *listPicker;
 
 @property (strong, nonatomic) IBOutlet UIDatePicker *datePicker;
 @property (weak, nonatomic) IBOutlet UIButton *activeBtn;
@@ -85,7 +89,11 @@ typedef enum
     self.tableView.delegate = self;
     
     self.textField.delegate = self;
+    self.listTextField.delegate = self;
     self.dateTextField.delegate = self;
+    
+    self.listPicker.dataSource = self;
+    self.listPicker.delegate = self;
     
     resultsArray = [[NSArray alloc]init];
     
@@ -99,14 +107,32 @@ typedef enum
     [dateFormat setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     
     selectedCall = 0;
+    
+    listArray = [[NSMutableArray alloc]initWithObjects:@"Select a list", nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    HttpResponse *response = [ListsCollection listsWithAccessToken:[CTCTGlobal shared].token andModificationDate:nil];
-    listArray = [[NSMutableArray alloc] initWithArray:response.data];
+    dispatch_queue_t callService = dispatch_queue_create("callService", nil);
+    dispatch_async(callService, ^{
+        
+        HttpResponse *response = [ListsCollection listsWithAccessToken:[CTCTGlobal shared].token andModificationDate:nil];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            contactListArray = [NSArray arrayWithArray:response.data];
+            
+            for(ContactList *list in response.data)
+            {
+                [listArray addObject:list.name];
+            }
+            
+            [self.listPicker selectRow:0 inComponent:0 animated:NO];
+            [self.listPicker reloadAllComponents];
+                   });
+    });
+    dispatch_release(callService);
 }
 
 - (void)didReceiveMemoryWarning
@@ -124,6 +150,8 @@ typedef enum
     [self setUnconfBtn:nil];
     [self setOutputBtn:nil];
     [self setRemovedBtn:nil];
+    [self setListTextField:nil];
+    [self setListPicker:nil];
     [super viewDidUnload];
 }
 
@@ -220,6 +248,17 @@ typedef enum
         self.outputBtn.enabled = NO;
         self.removedBtn.enabled = NO;
     }
+    if(textField.tag == 2)
+    {
+        textField.inputView = self.listPicker;
+        self.textField.text = @"";
+        
+        self.activeBtn.enabled = NO;
+        self.unconfBtn.enabled = NO;
+        self.outputBtn.enabled = NO;
+        self.removedBtn.enabled = NO;
+    }
+    
     self.dateTextField.text = @"";
     self.activeBtn.enabled = YES;
     self.unconfBtn.enabled = YES;
@@ -282,14 +321,20 @@ typedef enum
 - (IBAction)membershipDate:(id)sender
 {
     selectedCall = MEMBERSHIP_CALL;
-    if(self.dateTextField.text.length > 0)
+    if( self.listTextField.text.length > 0)
     {
-        [self callForDate];
+        if(self.dateTextField.text.length > 0)
+        {
+     
+            [self callForDate];
+        }
+        else
+        {
+            [self callForLimit];
+        }
     }
     else
-    {
-        [self callForLimit];
-    }
+        [[[UIAlertView alloc]initWithTitle:nil message:@"For membership lists a list must be selected" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
 }
 
 #pragma mark - call for parameters
@@ -314,9 +359,7 @@ typedef enum
                 
             case MEMBERSHIP_CALL:
             {
-                ContactList *list = 0;
-                if(listArray)
-                    list = [listArray objectAtIndex:0];
+                ContactList *list = contactListArray[selectedList - 1];
                 
                 response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:list.listId withModificationDate:[self.datePicker date] withAlimitOf:nil];
                 break;
@@ -366,9 +409,12 @@ typedef enum
             case EMAIL_CALL: response = [EmailCampaignService getCampaignsWithToken:[CTCTGlobal shared].token withALimitOf:self.textField.text];
                 break;
                 
-            case MEMBERSHIP_CALL: response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:@"1876010237" withModificationDate:nil withAlimitOf:self.textField.text];
+            case MEMBERSHIP_CALL:
+            {
+                ContactList *list = contactListArray[selectedList - 1];
+                response = [ListsCollection getContactListMembershipWithAccessToken:[CTCTGlobal shared].token fromList:list.listId withModificationDate:nil withAlimitOf:self.textField.text];
                 break;
-                
+            }
             default:break;
         }
         
@@ -390,5 +436,27 @@ typedef enum
         });
     });
     dispatch_release(callService);
+}
+
+#pragma mark - picker view
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    return listArray[row];
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return listArray.count;
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    self.listTextField.text = listArray[row];
+    selectedList = row;
 }
 @end
