@@ -18,7 +18,7 @@
     NSString *httpQuery = [NSString stringWithFormat:@"access_token=%@&api_key=%@", accessToken, apiKey];
     
     if(limit > 0)
-        httpQuery = [NSString stringWithFormat:@"%@&limit=%@", httpQuery, limit];
+        httpQuery = [NSString stringWithFormat:@"%@&limit=%d", httpQuery, limit];
     
     NSString *url = [NSString stringWithFormat:@"%@%@?%@", baseURL, endpoint, httpQuery];
     
@@ -182,7 +182,7 @@
         httpQuery = [NSString stringWithFormat:@"%@&created_since=%@", httpQuery, dateString];
     }
     else if(limit > 0)
-        httpQuery = [NSString stringWithFormat:@"%@&limit=%@", httpQuery, limit];
+        httpQuery = [NSString stringWithFormat:@"%@&limit=%d", httpQuery, limit];
     
     NSString *url = [NSString stringWithFormat:@"%@%@?%@", baseURL, endpoint, httpQuery];
     
