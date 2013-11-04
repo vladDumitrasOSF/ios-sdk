@@ -20,6 +20,9 @@
 #import "CollectionsViewController.h"
 #import "ContactTrackingViewController.h"
 
+#import "MyFoldersViewController.h"
+#import "MyFilesViewController.h"
+
 @interface MainViewController () <CTCTLoginDelegate,UITextFieldDelegate>
 {
     NSMutableArray *filesArray;
@@ -28,6 +31,8 @@
     CollectionsViewController     *contCol;
     ContactTrackingViewController *contrTrk;
     UploadViewController          *uploadController;
+    MyFoldersViewController       *myFoldersViewController;
+    MyFilesViewController         *myFilesViewController;
 }
 
 @property (nonatomic, strong) NSArray               *contacts;
@@ -322,6 +327,16 @@
 
     self.navigationItem.leftBarButtonItem  = leftBtn;
     self.navigationItem.rightBarButtonItem = rightBtn;
+}
+- (IBAction)myFolders:(id)sender
+{
+    myFoldersViewController = [[MyFoldersViewController alloc]init];
+    [self.navigationController pushViewController:myFoldersViewController animated:YES];
+}
+- (IBAction)myFilesPress:(id)sender
+{
+    myFilesViewController = [[MyFilesViewController alloc]init];
+    [self.navigationController pushViewController:myFilesViewController animated:YES];
 }
 
 - (void)collections

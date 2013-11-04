@@ -77,6 +77,23 @@
 		C3534BBE180E983B005DEDCE /* EmailSortedActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = C3534BBC180E983B005DEDCE /* EmailSortedActivity.m */; };
 		C3534BE7180EB199005DEDCE /* ContactTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3534BE5180EB199005DEDCE /* ContactTrackingViewController.m */; };
 		C3534BE8180EB199005DEDCE /* ContactTrackingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3534BE6180EB199005DEDCE /* ContactTrackingViewController.xib */; };
+		C37F2E1B1821500A00B71CD2 /* MyLibraryFilesService.m in Sources */ = {isa = PBXBuildFile; fileRef = C37F2E1A1821500A00B71CD2 /* MyLibraryFilesService.m */; };
+		C37F2E20182152D600B71CD2 /* LibraryFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = C37F2E1F182152D600B71CD2 /* LibraryFolder.m */; };
+		C387919418239AEA0004EB87 /* NewFolderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C387919218239AEA0004EB87 /* NewFolderViewController.m */; };
+		C387919518239AEA0004EB87 /* NewFolderViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C387919318239AEA0004EB87 /* NewFolderViewController.xib */; };
+		C3988E271821430000697052 /* MyLibraryFoldersService.m in Sources */ = {isa = PBXBuildFile; fileRef = C3988E261821430000697052 /* MyLibraryFoldersService.m */; };
+		C3E7E87F1823C3D000C92DB4 /* MyFilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3E7E87D1823C3CF00C92DB4 /* MyFilesViewController.m */; };
+		C3E7E8801823C3D000C92DB4 /* MyFilesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3E7E87E1823C3CF00C92DB4 /* MyFilesViewController.xib */; };
+		C3E7E8841823F14300C92DB4 /* NewFileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3E7E8821823F13900C92DB4 /* NewFileViewController.m */; };
+		C3E7E8851823F14300C92DB4 /* NewFileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3E7E8831823F13E00C92DB4 /* NewFileViewController.xib */; };
+		C3FD3B611822494500605CB4 /* UsageSummary.m in Sources */ = {isa = PBXBuildFile; fileRef = C3FD3B601822494500605CB4 /* UsageSummary.m */; };
+		C3FD3B6418224ADF00605CB4 /* LibrarySummary.m in Sources */ = {isa = PBXBuildFile; fileRef = C3FD3B6318224ADF00605CB4 /* LibrarySummary.m */; };
+		C3FD3B67182254A300605CB4 /* LibraryFile.m in Sources */ = {isa = PBXBuildFile; fileRef = C3FD3B66182254A300605CB4 /* LibraryFile.m */; };
+		C3FD3B6A182254DD00605CB4 /* Thumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = C3FD3B69182254DC00605CB4 /* Thumbnail.m */; };
+		C3FD3B6D182264F200605CB4 /* FileMoved.m in Sources */ = {isa = PBXBuildFile; fileRef = C3FD3B6C182264F200605CB4 /* FileMoved.m */; };
+		C3FD3B701822672C00605CB4 /* FileUploadStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C3FD3B6F1822672C00605CB4 /* FileUploadStatus.m */; };
+		C3FD3B74182294D600605CB4 /* MyFoldersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3FD3B72182294D200605CB4 /* MyFoldersViewController.m */; };
+		C3FD3B75182294D600605CB4 /* MyFoldersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3FD3B73182294D500605CB4 /* MyFoldersViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -206,6 +223,36 @@
 		C3534BE4180EB199005DEDCE /* ContactTrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactTrackingViewController.h; path = CTCTContact/Tracking/ContactTrackingViewController.h; sourceTree = SOURCE_ROOT; };
 		C3534BE5180EB199005DEDCE /* ContactTrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactTrackingViewController.m; path = CTCTContact/Tracking/ContactTrackingViewController.m; sourceTree = SOURCE_ROOT; };
 		C3534BE6180EB199005DEDCE /* ContactTrackingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ContactTrackingViewController.xib; path = CTCTContact/Tracking/ContactTrackingViewController.xib; sourceTree = SOURCE_ROOT; };
+		C37F2E191821500A00B71CD2 /* MyLibraryFilesService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyLibraryFilesService.h; sourceTree = "<group>"; };
+		C37F2E1A1821500A00B71CD2 /* MyLibraryFilesService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyLibraryFilesService.m; sourceTree = "<group>"; };
+		C37F2E1E182152D600B71CD2 /* LibraryFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibraryFolder.h; sourceTree = "<group>"; };
+		C37F2E1F182152D600B71CD2 /* LibraryFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LibraryFolder.m; sourceTree = "<group>"; };
+		C387919118239AEA0004EB87 /* NewFolderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NewFolderViewController.h; path = MyFolders/NewFolderViewController.h; sourceTree = "<group>"; };
+		C387919218239AEA0004EB87 /* NewFolderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NewFolderViewController.m; path = MyFolders/NewFolderViewController.m; sourceTree = "<group>"; };
+		C387919318239AEA0004EB87 /* NewFolderViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = NewFolderViewController.xib; path = MyFolders/NewFolderViewController.xib; sourceTree = "<group>"; };
+		C3988E251821430000697052 /* MyLibraryFoldersService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyLibraryFoldersService.h; sourceTree = "<group>"; };
+		C3988E261821430000697052 /* MyLibraryFoldersService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyLibraryFoldersService.m; sourceTree = "<group>"; };
+		C3E7E87C1823C3CF00C92DB4 /* MyFilesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyFilesViewController.h; path = MyFiles/MyFilesViewController.h; sourceTree = "<group>"; };
+		C3E7E87D1823C3CF00C92DB4 /* MyFilesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyFilesViewController.m; path = MyFiles/MyFilesViewController.m; sourceTree = "<group>"; };
+		C3E7E87E1823C3CF00C92DB4 /* MyFilesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MyFilesViewController.xib; path = MyFiles/MyFilesViewController.xib; sourceTree = "<group>"; };
+		C3E7E8811823F13500C92DB4 /* NewFileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NewFileViewController.h; path = MyFiles/NewFileViewController.h; sourceTree = "<group>"; };
+		C3E7E8821823F13900C92DB4 /* NewFileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NewFileViewController.m; path = MyFiles/NewFileViewController.m; sourceTree = "<group>"; };
+		C3E7E8831823F13E00C92DB4 /* NewFileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = NewFileViewController.xib; path = MyFiles/NewFileViewController.xib; sourceTree = "<group>"; };
+		C3FD3B5F1822494500605CB4 /* UsageSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsageSummary.h; sourceTree = "<group>"; };
+		C3FD3B601822494500605CB4 /* UsageSummary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsageSummary.m; sourceTree = "<group>"; };
+		C3FD3B6218224ADF00605CB4 /* LibrarySummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibrarySummary.h; sourceTree = "<group>"; };
+		C3FD3B6318224ADF00605CB4 /* LibrarySummary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LibrarySummary.m; sourceTree = "<group>"; };
+		C3FD3B65182254A200605CB4 /* LibraryFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibraryFile.h; sourceTree = "<group>"; };
+		C3FD3B66182254A300605CB4 /* LibraryFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LibraryFile.m; sourceTree = "<group>"; };
+		C3FD3B68182254DC00605CB4 /* Thumbnail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thumbnail.h; sourceTree = "<group>"; };
+		C3FD3B69182254DC00605CB4 /* Thumbnail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Thumbnail.m; sourceTree = "<group>"; };
+		C3FD3B6B182264F200605CB4 /* FileMoved.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMoved.h; sourceTree = "<group>"; };
+		C3FD3B6C182264F200605CB4 /* FileMoved.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileMoved.m; sourceTree = "<group>"; };
+		C3FD3B6E1822672C00605CB4 /* FileUploadStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUploadStatus.h; sourceTree = "<group>"; };
+		C3FD3B6F1822672C00605CB4 /* FileUploadStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUploadStatus.m; sourceTree = "<group>"; };
+		C3FD3B71182294D100605CB4 /* MyFoldersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyFoldersViewController.h; path = MyFolders/MyFoldersViewController.h; sourceTree = "<group>"; };
+		C3FD3B72182294D200605CB4 /* MyFoldersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyFoldersViewController.m; path = MyFolders/MyFoldersViewController.m; sourceTree = "<group>"; };
+		C3FD3B73182294D500605CB4 /* MyFoldersViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MyFoldersViewController.xib; path = MyFolders/MyFoldersViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -279,6 +326,18 @@
 				B029C4B417047C09005B4FE2 /* LoadingView.h */,
 				B029C4B517047C0A005B4FE2 /* LoadingView.m */,
 				B029C40A17046F0F005B4FE2 /* Supporting Files */,
+				C3FD3B71182294D100605CB4 /* MyFoldersViewController.h */,
+				C3FD3B72182294D200605CB4 /* MyFoldersViewController.m */,
+				C3FD3B73182294D500605CB4 /* MyFoldersViewController.xib */,
+				C387919118239AEA0004EB87 /* NewFolderViewController.h */,
+				C387919218239AEA0004EB87 /* NewFolderViewController.m */,
+				C387919318239AEA0004EB87 /* NewFolderViewController.xib */,
+				C3E7E87C1823C3CF00C92DB4 /* MyFilesViewController.h */,
+				C3E7E87D1823C3CF00C92DB4 /* MyFilesViewController.m */,
+				C3E7E87E1823C3CF00C92DB4 /* MyFilesViewController.xib */,
+				C3E7E8811823F13500C92DB4 /* NewFileViewController.h */,
+				C3E7E8821823F13900C92DB4 /* NewFileViewController.m */,
+				C3E7E8831823F13E00C92DB4 /* NewFileViewController.xib */,
 			);
 			path = CTCTContact;
 			sourceTree = "<group>";
@@ -341,6 +400,8 @@
 		B0F396F11729376200205B40 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				C37F2E1C1821529500B71CD2 /* MyLibraryFiles */,
+				C37F2E1D1821529500B71CD2 /* MyLibraryFolders */,
 				B0F396F21729376200205B40 /* Activites */,
 				B0F396FD1729376200205B40 /* Component.h */,
 				B0F396FE1729376200205B40 /* Component.m */,
@@ -478,6 +539,10 @@
 				B0F397401729376200205B40 /* EmailCampaignService.m */,
 				B0F397411729376200205B40 /* VerifiedEmailAddresses.h */,
 				B0F397421729376200205B40 /* VerifiedEmailAddresses.m */,
+				C3988E251821430000697052 /* MyLibraryFoldersService.h */,
+				C3988E261821430000697052 /* MyLibraryFoldersService.m */,
+				C37F2E191821500A00B71CD2 /* MyLibraryFilesService.h */,
+				C37F2E1A1821500A00B71CD2 /* MyLibraryFilesService.m */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -489,6 +554,34 @@
 				B0F397451729376200205B40 /* CTCTGlobal.m */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		C37F2E1C1821529500B71CD2 /* MyLibraryFiles */ = {
+			isa = PBXGroup;
+			children = (
+				C3FD3B6B182264F200605CB4 /* FileMoved.h */,
+				C3FD3B6C182264F200605CB4 /* FileMoved.m */,
+				C3FD3B6E1822672C00605CB4 /* FileUploadStatus.h */,
+				C3FD3B6F1822672C00605CB4 /* FileUploadStatus.m */,
+			);
+			path = MyLibraryFiles;
+			sourceTree = "<group>";
+		};
+		C37F2E1D1821529500B71CD2 /* MyLibraryFolders */ = {
+			isa = PBXGroup;
+			children = (
+				C37F2E1E182152D600B71CD2 /* LibraryFolder.h */,
+				C37F2E1F182152D600B71CD2 /* LibraryFolder.m */,
+				C3FD3B5F1822494500605CB4 /* UsageSummary.h */,
+				C3FD3B601822494500605CB4 /* UsageSummary.m */,
+				C3FD3B6218224ADF00605CB4 /* LibrarySummary.h */,
+				C3FD3B6318224ADF00605CB4 /* LibrarySummary.m */,
+				C3FD3B65182254A200605CB4 /* LibraryFile.h */,
+				C3FD3B66182254A300605CB4 /* LibraryFile.m */,
+				C3FD3B68182254DC00605CB4 /* Thumbnail.h */,
+				C3FD3B69182254DC00605CB4 /* Thumbnail.m */,
+			);
+			path = MyLibraryFolders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -555,6 +648,10 @@
 				C30EC31D180D8B32003AA395 /* CollectionsViewController.xib in Resources */,
 				C3534BE8180EB199005DEDCE /* ContactTrackingViewController.xib in Resources */,
 				C308798F180FEF6E00B493AD /* UploadViewController.xib in Resources */,
+				C3FD3B75182294D600605CB4 /* MyFoldersViewController.xib in Resources */,
+				C387919518239AEA0004EB87 /* NewFolderViewController.xib in Resources */,
+				C3E7E8801823C3D000C92DB4 /* MyFilesViewController.xib in Resources */,
+				C3E7E8851823F14300C92DB4 /* NewFileViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,9 +713,22 @@
 				B0F397721729376300205B40 /* CTCTGlobal.m in Sources */,
 				C30EC31C180D8B32003AA395 /* CollectionsViewController.m in Sources */,
 				C3534BBD180E983B005DEDCE /* AllActivites.m in Sources */,
+				C3988E271821430000697052 /* MyLibraryFoldersService.m in Sources */,
 				C3534BBE180E983B005DEDCE /* EmailSortedActivity.m in Sources */,
 				C3534BE7180EB199005DEDCE /* ContactTrackingViewController.m in Sources */,
 				C308798E180FEF6E00B493AD /* UploadViewController.m in Sources */,
+				C37F2E1B1821500A00B71CD2 /* MyLibraryFilesService.m in Sources */,
+				C37F2E20182152D600B71CD2 /* LibraryFolder.m in Sources */,
+				C3FD3B611822494500605CB4 /* UsageSummary.m in Sources */,
+				C3FD3B6418224ADF00605CB4 /* LibrarySummary.m in Sources */,
+				C3FD3B67182254A300605CB4 /* LibraryFile.m in Sources */,
+				C3FD3B6A182254DD00605CB4 /* Thumbnail.m in Sources */,
+				C3FD3B6D182264F200605CB4 /* FileMoved.m in Sources */,
+				C3FD3B701822672C00605CB4 /* FileUploadStatus.m in Sources */,
+				C3FD3B74182294D600605CB4 /* MyFoldersViewController.m in Sources */,
+				C387919418239AEA0004EB87 /* NewFolderViewController.m in Sources */,
+				C3E7E87F1823C3D000C92DB4 /* MyFilesViewController.m in Sources */,
+				C3E7E8841823F14300C92DB4 /* NewFileViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
