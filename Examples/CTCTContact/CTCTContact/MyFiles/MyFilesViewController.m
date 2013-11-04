@@ -246,9 +246,9 @@
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:selectedFileToLoad];
     
     
-    BOOL response =  [MyLibraryFilesService addFileMultipartWithToken:[CTCTGlobal shared].token  withFile:filePath toFolder:folder.folderId withDescription:@"testing testing" fromSource:@"MYCOMPUTER" errors:&error];
+    HttpResponse *response =  [MyLibraryFilesService addFileMultipartWithToken:[CTCTGlobal shared].token  withFile:filePath toFolder:folder.folderId withDescription:@"testing testing" fromSource:@"MYCOMPUTER" errors:&error];
         
-    if(response)
+    if(response.statusCode == 202)
     {
         HttpResponse *resp2 = [MyLibraryFilesService getFileCollectionWithAccessToken:[CTCTGlobal shared].token type:nil source:nil withALimitOf:0];
         ResultSet *set2 = resp2.data;
@@ -256,7 +256,9 @@
         allFiles = set2.results;
         [self.filesPicker reloadAllComponents];
         
-        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload Succesful" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        NSString *mess = [NSString stringWithFormat:@"%@",[response.data objectForKey:@"upload_id"]];
+        
+        [[[UIAlertView alloc] initWithTitle:@"Error" message:[NSString stringWithFormat:@"Upload Succesful to id %@",mess ] delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
     }
     else
         [[[UIAlertView alloc] initWithTitle:@"Error" message:@"" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
