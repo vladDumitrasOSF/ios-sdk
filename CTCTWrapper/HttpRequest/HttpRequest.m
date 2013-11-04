@@ -309,8 +309,16 @@
     NSDictionary *responseDictionary;
     
     // json may return dictionary or array classes have to check
-    if (responseStatusCode == 200 || responseStatusCode == 204 || responseStatusCode == 201)
+    if (responseStatusCode == 202)
     {
+        if ([response respondsToSelector:@selector(allHeaderFields)])
+        {
+            NSDictionary *dictionary = [httpResponse allHeaderFields];
+            NSArray *locationArray = [[dictionary objectForKey:@"Location"] componentsSeparatedByString:@"/"];
+            
+            responseJSON = [NSDictionary dictionaryWithObjectsAndKeys:locationArray.lastObject,@"upload_id",nil];
+        }
+        
         responseDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
                               urlString, KEY_REQUEST_URL,
                               responseURL, KEY_RESPONSE_URL,
