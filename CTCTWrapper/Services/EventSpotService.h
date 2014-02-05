@@ -30,7 +30,7 @@
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param int limit - (optional) the number of elements to be returned, default 50;
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), Result set containing array of Event items
  */
 + (HttpResponse *)getEventCollectionWithAccessToken:(NSString*)accessToken withALimitOf:(int)limit;
 
@@ -40,7 +40,7 @@
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param EventExtended *event - the event that needs to be added
  *
- * @return HttpResponse * - response containing either errors or data with the specific EventSpot created
+ * @return HttpResponse * - response containing either errors or data with the specific EventSpot created, data contains Event type item
  */
 + (HttpResponse*)addEventWithToken:(NSString *)accessToken andEvent:(EventExtended *)event;
 
@@ -52,7 +52,7 @@
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param NSString *eventId - Unique ID of the event to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Extended type item
  */
 + (HttpResponse *)getEventWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId;
 
@@ -64,7 +64,7 @@
  * @param NSString *eventId - Unique ID of the event to update
  * @param EventExtended *event - the event that needs to be updated
  *
- * @return HttpResponse * - response containing either errors or data with the updated EventSpot
+ * @return HttpResponse * - response containing either errors or data with the updated EventSpot, data contains Event type item
  */
 + (HttpResponse*)updateEventWithAccesToken:(NSString *)accessToken withEventId:(NSString *)eventId andEvent:(EventExtended *)event;
 
@@ -76,7 +76,7 @@
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param NSString *eventId - Unique ID of the event to patch
  *
- * @return HttpResponse * - response containing either errors or data with the updated EventSpot
+ * @return HttpResponse * - response containing either errors or data with the updated EventSpot, data contains Event Extended type item
  */
 + (HttpResponse*)patchEventWithAccesToken:(NSString *)accessToken withEventId:(NSString *)eventId action:(EventPatch *)patch;
 
@@ -88,7 +88,7 @@
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param NSString *eventId - Unique ID of the event fee to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some),data contains array of Event Fee items
  */
 + (HttpResponse *)getEventFeesCollectionWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId;
 
@@ -99,7 +99,7 @@
  * @param NSString *eventId - Unique ID of the event fee to which we will add the fee
  * @param EventFee *eventFee - the event fee that needs to be added
  *
- * @return HttpResponse * - response containing either errors or data with the specific EventSpot fee created
+ * @return HttpResponse * - response containing either errors or data with the specific EventSpot fee created,
  */
 + (HttpResponse*)addEventFeeWithToken:(NSString *)accessToken withEventId:(NSString *)eventId andEventFee:(EventFee *)eventFee;
 
@@ -112,7 +112,7 @@
  * @param NSString *eventId - Unique ID of the event to retrieve
  * @param NSString *feeId - Unique ID of the event fee to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Fee item
  */
 + (HttpResponse *)getEventFeeWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId andFeeId:(NSString *)feeId;
 
@@ -124,7 +124,7 @@
  * @param NSString *feeId - Unique ID of the event fee to update
  * @param EventFee *eventFee - the event fee that needs to be updated
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Fee item that was updated
  */
 + (HttpResponse *)updateEventFeeWithAccesToken:(NSString*)accessToken withEventId:(NSString *)eventId feeId:(NSString *)feeId andEventFee:(EventFee *)eventFee;
 
@@ -147,7 +147,7 @@
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param NSString *eventId - Unique ID of the event which will have it's promocodes returned
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Promocode item array
  */
 + (HttpResponse *)getPromocodeCollectionWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId;
 
@@ -161,7 +161,7 @@
  * @param NSString *eventId - Unique ID of the event to post the promocode to
  * @param EventPromocode *promocode - the promocode that will get added
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Promocode item created
  */
 + (HttpResponse *)addPromocodeWithAccesToken:(NSString*)accessToken withEventId:(NSString *)eventId  andPromocode:(EventPromocode *)promocode;
 
@@ -174,7 +174,7 @@
  * @param NSString *eventId - Unique ID of the event to which the promocode belongs to
  * @param NSString *promocodeId - Unique ID of the promocode to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Promocode item
  */
 + (HttpResponse *)getPromocodeWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId andPromocodeId:(NSString *)promocodeId;
 
@@ -186,7 +186,7 @@
  * @param NSString *promocodeId - Unique ID of the promocode to update
  * @param EventPromocode *promocode - the promocode that will be updated
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Promocode item updated
  */
 + (HttpResponse *)updatePromocodeWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId andPromocodeId:(NSString *)promocodeId andPromocode:(EventPromocode *)promocode;
 
@@ -210,7 +210,7 @@
  * @param NSString *eventId - Unique ID of the event from which all registrants are returned
  * @param int limit - (optional) the number of elements to be returned, default 50;
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains EventRegistrant item array
  */
 + (HttpResponse *)getEventRegistrantCollectionWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId withALimitOf:(int)limit;
 
@@ -222,7 +222,7 @@
  * @param NSString *eventId - Unique ID of the event from which all registrants are returned
  * @param NSString *registrantId - Unique ID of the registrant to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains EventRegistrantExtended item
  */
 + (HttpResponse *)getEventRegistrantWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId andRegistrantId:(NSString *)registrantId;
 
@@ -234,7 +234,7 @@
  * @param NSString *accessToken - Constant Contact OAuth2 access token
  * @param NSString *eventId - Unique ID of the event which will have it's items returned
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item array
  */
 + (HttpResponse *)getEventItemCollectionWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId;
 
@@ -245,7 +245,7 @@
  * @param NSString *eventId - Unique ID of the event to post the item to
  * @param EventItem *item - the item that will get added
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item added
  */
 + (HttpResponse *)addEventItemWithAccesToken:(NSString*)accessToken withEventId:(NSString *)eventId  andItem:(EventItem *)item;
 
@@ -258,7 +258,7 @@
  * @param NSString *eventId - Unique ID of the event that contains the desired item
  * @param NSString *itemId - Unique ID of the item to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item object
  */
 + (HttpResponse *)getEventItemWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId andItemId:(NSString *)itemId;
 
@@ -270,7 +270,7 @@
  * @param NSString *itemId - Unique ID of the item to retrieve
  * @param EventItem *item - the item that will get updated
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item that was updated
  */
 + (HttpResponse *)updateEventItemWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId itemId:(NSString *)itemId andItem:(EventItem *)item;
 
@@ -294,7 +294,7 @@
  * @param NSString *eventId - Unique ID of the event that containes the desired item
  * @param NSString *itemId - Unique ID of the item whos parameters you want to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item Attribute array of objects
  */
 + (HttpResponse *)getEventItemAttributeCollectionWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId andItemId:(NSString *)itemId;
 
@@ -306,7 +306,7 @@
  * @param NSString *itemId - Unique ID of the item whos parameters you want to update
  * @param EventItemAttribute *itemAttribute - the event item attribute object that you want to add
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item Attribute object
  */
 + (HttpResponse *)addEventItemAttributeWithAccesToken:(NSString*)accessToken withEventId:(NSString *)eventId itemId:(NSString *)itemId andItemAttribute:(EventItemAttribute *)itemAttribute;
 
@@ -320,7 +320,7 @@
  * @param NSString *itemId - Unique ID of the item whos parameters you want to retrieve
  * @param NSString *attributeId - The specific attribute object you want to retrieve
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item Attribute object
  */
 + (HttpResponse *)getEventItemAttributeWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId itemId:(NSString *)itemId andAttributeId:(NSString *)attributeId;
 
@@ -333,7 +333,7 @@
  * @param NSString *attributeId - The specific attribute object you want to retrieve
  * @param EventItemAttribute *itemAttribute - the event item attribute object that you want to update to
  *
- * @return HttpResponse * - response containing data and errors (if there are some)
+ * @return HttpResponse * - response containing data and errors (if there are some), data contains Event Item Attribute that was updated
  */
 + (HttpResponse *)updateEventItemAttributeWithAccessToken:(NSString*)accessToken withEventId:(NSString *)eventId itemId:(NSString *)itemId attributeId:(NSString *)attributeId andAttribute:(EventItemAttribute *)itemAttribute;
 
